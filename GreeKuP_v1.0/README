@@ -13,7 +13,7 @@ B. LICENSE AGREEMENT
 
 The free of charge usage of this code is intended for academic research purposes only; in this case it must be acknowledged by the following references:
 
-[1] EPL paper
+[1] CPP paper
 [2] Knyazev D.V., Levashov P.R. Comput. Mater. Sci. 79, 817 - 829 (2013).
 
 For commercial use please contact the authors:
@@ -227,5 +227,5 @@ The readable versions of THERMAL_DC and RATIO_DC will be written automatically t
 
 REFERENCES
 
-[1] EPL paper
+[1] CPP paper
 [2] Knyazev D.V., Levashov P.R. Comput. Mater. Sci. 79, 817 - 829 (2013).
