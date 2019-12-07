@@ -30,26 +30,57 @@ C1) Modification of VASP.
 
 C1a) The optics.F file of the VASP package should be modified.
 
-The patches for optics.F may be found in GreeKuP_dir/vasp_patches. The patches are available only for VASP 5.2 and VASP 5.3.
+The patches for optics.F may be found in GreeKuP_dir/vasp_patches. The patches are available for VASP 5.2, VASP 5.3.3, VASP 5.4.1, VASP 5.4.4.
 
 The backup of original optics.F is better to be created (just in case).
 
-The patches should be applied:
+The patches should be applied for various VASP versions as follows. Please note, that the original optics.F will be overwritten with a patched version duringthe execution of "patch" command.
 
-$ patch optics.F optics.F_vasp5.3_patch - for VASP 5.3
-$ patch optics.F optics.F_vasp5.2_patch - for VASP 5.2
+VASP 5.2:
+The original optics.F file is located in vasp.5.2 directory.
+$ patch optics.F optics.F_vasp5.2_patch
+New optics.F file should be placed to vasp.5.2 directory.
 
-The original optics.F will be overwritten with a patched version.
+VASP 5.3.3:
+The original optics.F file is located in vasp.5.3 directory.
+$ patch optics.F optics.F_vasp5.3.3_patch
+New optics.F file should be placed to vasp.5.3 directory.
+
+VASP 5.4.1:
+The original optics.F file is located in vasp.5.4.1/src directory.
+$ patch optics.F optics.F_vasp5.4.1_patch
+New optics.F file should be placed to vasp.5.4.1/src directory.
+
+VASP 5.4.4:
+The original optics.F file is located in vasp.5.4.4/src directory.
+$ patch optics.F optics.f_vasp5.4.4_patch
+New optics.F file should be placed to vasp.5.4.4/src directory.
+
+In fact, the original optics.F files (and therefore the patches) coincide for VASP 5.3.3, VASP 5.4.1, VASP 5.4.4. The original optics.F file (and therefore the patch) is different for VASP 5.2.
 
 C1b) Now VASP should be recompiled.
 
-Remove optics.f90 and executable file "vasp" from the VASP directory (the backup copy of the original executable "vasp" is better to be created).
+The backup copy of the original VASP executable is better to be created.
 
-Recompile VASP:
- 
-$ make -f Makefile
+VASP 5.2:
+Recompile VASP while being in vasp.5.2 directory:
+$ make -f your_makefile
+New optics.f90 and new "vasp" executable should be created in vasp.5.2 directory.
 
-New optics.f90 and new "vasp" executable should be created.
+VASP 5.3.3:
+Recompile VASP while being in vasp.5.3 directory:
+$ make -f your_makefile
+New optics.f90 and new "vasp" executable should be created in vasp.5.3 directory.
+
+VASP 5.4.1:
+Recompile VASP while being in vasp.5.4.1 directory:
+$ make std
+New optics.f90 should be created in vasp.5.4.1/build/std, whereas new "vasp_std" executable will be in vasp.5.4.1/bin.
+
+VASP 5.4.4:
+Recompile VASP while being in vasp.5.4.4 directory:
+$ make std
+New optics.f90 should be created in vasp.5.4.4/build/std, whereas new "vasp_std" executable will be in vasp.5.4.4/bin.
 
 C2) Compilation of GreeKuP.
 
