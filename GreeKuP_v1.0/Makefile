@@ -1,14 +1,19 @@
 version=GreeKuP_v1.0
 
 CC=mpiCC
-MYHOME=/seg3/OIVT_RAN/levashov_pr/knyazev/GreeKuP/
+
+#MYHOME should contain path to the folder, where $(DIRNAME) is located, e.g., MYHOME=/home/knyazev/GreeKuP
+#MYHOME should not contain / at the end
+MYHOME=$(GREEKUP_HOME)
 DIRNAME=GreeKuP_v1.0
 
-MOD=$(MYHOME)$(DIRNAME)/modules_c++/
-PROG=$(MYHOME)$(DIRNAME)/condcalc_c++/
-OMEGA=$(MYHOME)$(DIRNAME)/omega_generation/
+MOD=$(MYHOME)/$(DIRNAME)/modules_c++/
+PROG=$(MYHOME)/$(DIRNAME)/condcalc_c++/
+OMEGA=$(MYHOME)/$(DIRNAME)/omega_generation/
 
-
+ifeq ($(MYHOME),)
+$(error The variable MYHOME is not set. Please set this variable to proceed. Execution of the Makefile is terminated)
+endif
 
 obj_simple= lattice.o keys.o omegainout.o mymath.o
 obj_module= myinout.o nablainout.o $(obj_simple)
@@ -77,6 +82,6 @@ $(addprefix $(MOD), $(obj_simple)): %.o: %.C %.h
 	$(CC) -c $*.C -o $*.o
 
 clean:
-	cd $(MOD); rm -f *.o; touch *.C; touch *.h; cd -
-	cd $(PROG); rm -f *.o; touch *.C; rm -f $(programs_condcalc); cd -
-	cd $(OMEGA); rm -f *.o; touch *.C; rm -f $(programs_omega); cd -
+	cd $(MOD); rm -f *.o; cd -
+	cd $(PROG); rm -f *.o; rm -f $(programs_condcalc); cd -
+	cd $(OMEGA); rm -f *.o; rm -f $(programs_omega); cd -
