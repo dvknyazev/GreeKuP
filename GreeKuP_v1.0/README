@@ -1,13 +1,13 @@
 A. GENERAL INFORMATION
 
-Here we present the GreeKuP (GREEnwood-KUbo Program) code. The code was designed for the calculation of electronic transport and optical properties via the Kubo-Greenwood formula. The main optical property is dynamic electrical conductivity. Transport properties include static electrical conductivity and thermal conductivity. The code is compatible with the VASP package. The code parallelization enables its usage on supercomputers.
+Here we present the GreeKuP (GREEnwood-KUbo Program) code. The code was designed for the calculation of electronic transport and optical properties via the Kubo-Greenwood formula. The main optical property is dynamic electrical conductivity. Transport properties include static electrical conductivity and thermal conductivity. The code is compatible with the VASP package. The code parallelization enables its usage on supercomputers. The GreeKuP code is written in C++ programming language.
 
 The description of the computation technique may be found in our papers [1,2]. The instructions on code compilation and usage are available below.
 
 Current version: GreeKuP_v1.0
 Developed by: Dmitry Knyazev, d.v.knyazev@yandex.ru
 
-Hereafter the top directory with the GreeKuP code will be referred to as GreeKuP_dir. The default name for the GreeKuP_dir is GreeKuP_v1.0. It is considered that the GreeKuP_dir is located in the home directory.
+Hereafter the top directory with the GreeKuP code will be referred to as GreeKuP_dir. The default name for the GreeKuP_dir is GreeKuP_v1.0.
 
 B. LICENSE AGREEMENT
 
@@ -84,14 +84,24 @@ New optics.f90 should be created in vasp.5.4.4/build/std, whereas new "vasp_std"
 
 C2) Compilation of GreeKuP.
 
-Change into GreeKuP_dir. You will find the Makefile there. Open Makefile.
+Change into GreeKuP_dir. You will find the Makefile there.
 
-Change the following variables in the Makefile:
-- MYHOME - the path to the directory where GreeKuP_dir is located should be written here
-- DIRNAME - write the GreeKuP_dir here (GreeKuP_v1.0 is default)
-- CC - the compiler name mpiCC is written here
+C2a) Set one of the parallel C++ compilers avaialable on your machine for GreeKuP compilation.
 
-Run the "make" command in the GreeKuP_dir:
+This may be done in two ways.
+
+i) You may simply change the CC variable in the Makefile.
+Open the Makefile and set the CC variable (e.g.):
+CC=mpiCC
+
+ii) Or you may set the GREEKUP_COMPILER environment variable.
+Add the line (e.g.):
+export GREEKUP_COMPILER=mpiCC
+to your .bashrc file and reload the session.
+
+C2b) Compile GreeKuP.
+
+Simply run the "make" command in the GreeKuP_dir:
 $ make
 
 All necessary programs should be compiled now. The main program that will be used - "GreeKuP" executable in GreeKuP_dir/condcalc_c++.

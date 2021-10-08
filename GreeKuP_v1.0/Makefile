@@ -1,30 +1,31 @@
 version=GreeKuP_v1.0
 
-CC=mpiCC
+CC=$(GREEKUP_COMPILER)
+#Set the C++ compiler available on your machine. It will be used to compile GreeKuP
 
-#MYHOME should contain path to the folder, where $(DIRNAME) is located, e.g., MYHOME=/home/knyazev/GreeKuP
-#MYHOME should not contain / at the end
-MYHOME=$(GREEKUP_HOME)
-DIRNAME=GreeKuP_v1.0
 
-MOD=$(MYHOME)/$(DIRNAME)/modules_c++/
-PROG=$(MYHOME)/$(DIRNAME)/condcalc_c++/
-OMEGA=$(MYHOME)/$(DIRNAME)/omega_generation/
-
-ifeq ($(MYHOME),)
-$(error The variable MYHOME is not set. Please set this variable to proceed. Execution of the Makefile is terminated)
+ifeq ($(CC),)
+$(error The variable CC, that specifies the C++ compiler for GreeKuP is not set. Please set this variable to proceed. You may set the environment variable GREEKUP_COMPILER or set CC manually in the Makefile. Execution of the Makefile is terminated)
 endif
 
-obj_simple= lattice.o keys.o omegainout.o mymath.o
-obj_module= myinout.o nablainout.o $(obj_simple)
+makefile_dir:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+#This_command returns absolute path to the current Makefile. This is crucial if this Makefile is run from other directory
 
-progs_simple= condmultipleprocess dccalc heatcalc
+MOD:=$(makefile_dir)/modules_c++/
+PROG:=$(makefile_dir)/condcalc_c++/
+OMEGA:=$(makefile_dir)/omega_generation/
 
-progs_omega= omega_generate printomega
 
-programs_condcalc= GreeKuP printnabla \
+obj_simple:= lattice.o keys.o omegainout.o mymath.o
+obj_module:= myinout.o nablainout.o $(obj_simple)
+
+progs_simple:= condmultipleprocess dccalc heatcalc
+
+progs_omega:= omega_generate printomega
+
+programs_condcalc:= GreeKuP printnabla \
 		$(progs_simple)
-programs_omega= $(progs_omega)
+programs_omega:= $(progs_omega)
 
 
 
