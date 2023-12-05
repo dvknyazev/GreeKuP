@@ -1,0 +1,274 @@
+A. GENERAL INFORMATION
+
+Here we present the GreeKuP (GREEnwood-KUbo Program) code. The code was designed for the calculation of electronic transport and optical properties via the Kubo-Greenwood formula. The main optical property is dynamic electrical conductivity. Transport properties include static electrical conductivity and thermal conductivity. The code is compatible with the VASP package. The code parallelization enables its usage on supercomputers. The GreeKuP code is written in C++ programming language.
+
+The description of the computation technique may be found in our papers [1,2]. The instructions on code compilation and usage are available below.
+
+Current version: GreeKuP_v1.0
+Developed by: Dmitry Knyazev, d.v.knyazev@yandex.ru
+
+Hereafter the top directory with the GreeKuP code will be referred to as GreeKuP_dir. The default name for the GreeKuP_dir is GreeKuP_v1.0.
+
+B. LICENSE AGREEMENT
+
+The free of charge usage of this code is intended for academic research purposes only; in this case it must be acknowledged by the following references:
+
+[1] Knyazev D.V., Levashov P.R. Contrib. Plasma Phys. 59, 345 - 353 (2019)
+    https://doi.org/10.1002/ctpp.201800084
+[2] Knyazev D.V., Levashov P.R. Comput. Mater. Sci. 79, 817 - 829 (2013).
+
+For commercial use please contact the authors:
+
+Dmitry Knyazev, d.v.knyazev@yandex.ru
+Pavel Levashov, pasha@ihed.ras.ru
+
+C. CODE COMPILATION
+
+First of all, all necessary programs should be compiled.
+
+C1) Modification of VASP.
+
+C1a) The optics.F file of the VASP package should be modified.
+
+The patches for optics.F may be found in GreeKuP_dir/vasp_patches. The patches are available for VASP 5.2, VASP 5.3.3, VASP 5.4.1, VASP 5.4.4.
+
+The backup of original optics.F is better to be created (just in case).
+
+The patches should be applied for various VASP versions as follows. Please note, that the original optics.F will be overwritten with a patched version duringthe execution of "patch" command.
+
+VASP 5.2:
+The original optics.F file is located in vasp.5.2 directory.
+$ patch optics.F optics.F_vasp5.2_patch
+New optics.F file should be placed to vasp.5.2 directory.
+
+VASP 5.3.3:
+The original optics.F file is located in vasp.5.3 directory.
+$ patch optics.F optics.F_vasp5.3.3_patch
+New optics.F file should be placed to vasp.5.3 directory.
+
+VASP 5.4.1:
+The original optics.F file is located in vasp.5.4.1/src directory.
+$ patch optics.F optics.F_vasp5.4.1_patch
+New optics.F file should be placed to vasp.5.4.1/src directory.
+
+VASP 5.4.4:
+The original optics.F file is located in vasp.5.4.4/src directory.
+$ patch optics.F optics.f_vasp5.4.4_patch
+New optics.F file should be placed to vasp.5.4.4/src directory.
+
+In fact, the original optics.F files (and therefore the patches) coincide for VASP 5.3.3, VASP 5.4.1, VASP 5.4.4. The original optics.F file (and therefore the patch) is different for VASP 5.2.
+
+C1b) Now VASP should be recompiled.
+
+The backup copy of the original VASP executable is better to be created.
+
+VASP 5.2:
+Recompile VASP while being in vasp.5.2 directory:
+$ make -f your_makefile
+New optics.f90 and new "vasp" executable should be created in vasp.5.2 directory.
+
+VASP 5.3.3:
+Recompile VASP while being in vasp.5.3 directory:
+$ make -f your_makefile
+New optics.f90 and new "vasp" executable should be created in vasp.5.3 directory.
+
+VASP 5.4.1:
+Recompile VASP while being in vasp.5.4.1 directory:
+$ make std
+New optics.f90 should be created in vasp.5.4.1/build/std, whereas new "vasp_std" executable will be in vasp.5.4.1/bin.
+
+VASP 5.4.4:
+Recompile VASP while being in vasp.5.4.4 directory:
+$ make std
+New optics.f90 should be created in vasp.5.4.4/build/std, whereas new "vasp_std" executable will be in vasp.5.4.4/bin.
+
+C2) Compilation of GreeKuP.
+
+Change into GreeKuP_dir. You will find the Makefile there.
+
+C2a) Set one of the parallel C++ compilers avaialable on your machine for GreeKuP compilation.
+
+This may be done in two ways.
+
+i) You may simply change the CC variable in the Makefile.
+Open the Makefile and set the CC variable (e.g.):
+CC=mpiCC
+
+ii) Or you may set the GREEKUP_COMPILER environment variable.
+Add the line (e.g.):
+export GREEKUP_COMPILER=mpiCC
+to your .bashrc file and reload the session.
+
+C2b) Compile GreeKuP.
+
+Simply run the "make" command in the GreeKuP_dir:
+$ make
+
+All necessary programs should be compiled now. The main program that will be used - "GreeKuP" executable in GreeKuP_dir/condcalc_c++.
+
+D. CODE USAGE
+
+The code usage will be demonstrated using the files in GreeKuP_dir/benchmark. The backup copy of GreeKuP_dir/benchmark may be created (just in case).
+
+We assume, that some ionic configuration is available. The following will describe the calculation of transport and optical properties for this ionic configuration.
+
+The benchmark configuration was generated for aluminum at T = 1273 K and \rho = 2.249 g/cm^3. The calculation at these conditions was extensively discussed in [2]. The time taken by various steps was estimated for CPU frequency 2.66 GHz.
+
+D1) Precise resolution of the band structure.
+
+The additional calculation of band structure should be performed. The necessary files are available in GreeKuP_dir/benchmark/zone:
+
+D1a) POSCAR - the ionic configuration obtained for aluminum at T = 1273 K and \rho = 2.249 g/cm^3.
+
+D1b) POTCAR - the pseudopotential of the PAW type (3 valence electrons); GGA-PBE exchange-correlation functional.
+
+D1c) KPOINTS - \Gamma-point.
+
+D1d) INCAR. We mention the following parameters in the INCAR file:
+SYSTEM - any information acceptable, usually the name of the system
+ENCUT - we set the necessary energy cut-off (often it is larger, than during the QMD simulation)
+ISTART - we set 0, to start the calculation of electronic structure from scratch
+SIGMA - we set the electron temperature in eV (in our case 1273 K - 0.110 eV)
+NSW - we check, that this parameter is absent. That means that no ionic steps will be performed.
+POTIM - we check, that this parameter is absent (it would be the time step of the QMD simulation)
+NBANDS - last in the list, but of primary importance. The correct number of bands should be set to obtain correct electrical conductivity at large frequencies (see [2] for details).
+
+D1e) Than VASP should be run from GreeKuP_dir/benchmark/zone.
+
+This step was performed at 64 CPUs and took 4 min 39 sec. The main purpose of this step is to perform calculation with the number of bands, larger than during the QMD simulation (this will be necessary for the further calculation of dynamic electrical conductivity).
+
+The WAVECAR file should be obtained at this step. WAVECAR will be necessary at the next step.
+
+D2) Calculation of the gradient operator matrix elements.
+
+Some of the necessary files are available in GreeKuP_dir/benchmark/nabla.
+
+The following files are necessary at this step:
+
+D2a) IMPORTANT! The WAVECAR file obtained during the previous step should be copied to GreeKuP_dir/benchmark/nabla.
+
+D2b) KPOINTS, POTCAR, POSCAR are inherited from the previous step (available in GreeKuP_dir/benchmark/nabla).
+
+D2c) IMPORTANT! The INCAR file from the previous step should be modified as follows:
+ISTART - we set 1 (!) to read wavefunctions from WAVECAR
+LOPTICS - we set .TRUE. to perform the calculation of matrix elements
+NELM - we set 0. The calculation of wavefunctions should not be performed one more time, the ready wavefunctions from WAVECAR should be used instead
+LWAVE - we set .FALSE.; WAVECAR should not be overwritten
+LCHARG - we set .FALSE.; CHGCAR should not be written (this will only waste disk space)
+The final INCAR file is available in GreeKuP_dir/benchmark/nabla
+
+D2d) Than VASP should be run on 1 CPU (!) from GreeKuP_dir/benchmark/nabla
+
+The idea of this step is clear. We use wavefunctions written to WAVECAR during the previous step. The VASP is run with calculation of matrix elements but without recalculation of wavefunctions. The VASP has to be used to perform PAW recalculation from pseudo matrix elements to all-electron ones (mentioned in [1]).
+
+This step has to be run on 1 CPU, otherwise optics.f90 fails to work. This step took 1 h 19 min 32 sec.
+
+At this step we obtain OPTICFULL file, that contains matrix elements of the gradient operator. The original optics.f90 produces the OPTIC file. The transitions only between valence bands and conduction ones are taken into account in OPTIC. This separation has no sense at non-zero temperature, hence optics.F was modified. The matrix elements corresponding to all possible transitions are now printed to OPTICFULL.
+
+D2e) The binary OPTICFULL file may be printed in readable format (usually takes several minutes):
+
+$ GreeKuP_dir/condcalc_c++/printnabla -nabla=path/OPTICFULL [-output=path/readable_version]
+
+-nabla=path/OPTICFULL - binary OPTICFULL file (with path)
+[-output=path/readable_version] - path to the output readable file (default: OPTICFULLFORM is printed to the directory with OPTICFULL)
+
+The OPTICFULL file will be used at the next step.
+
+D3) Calculation of the dynamic Onsager coefficients.
+
+Some of the necessary files are available in GreeKuP_dir/benchmark/cond.
+
+The following files are necessary at this step:
+
+D3a) OPTICFULL file obtained during the previous step should be copied to GreeKuP_dir/benchmark/cond.
+
+D3b) OMEGA - the binary file with the values of frequencies (\omega) and the values of \delta-function broadenings (\DeltaE). The example of such a file is available in GreeKuP_dir/benchmark/cond.
+
+The OMEGA file may be generated as follows:
+
+$ GreeKuP_dir/omega_generation/omega_generate -deltae=deltae1 -deltae=deltae2 ... -deltae=deltae10 -freqstep=freqstep -freqmax=freqmax [-freqmin=freqmin] [-omega=path/OMEGA]
+
+-deltae=deltae1 ... -deltae=deltae10 - list of \DeltaE in eV (default: the table consisting of 0.2 eV; 0.1 eV; 0.05 eV; 0.02 eV)
+-freqstep=freqstep - frequency step in eV (default: 0.02 eV)
+-freqmax=freqmax - maximum frequency in eV (default: 10 eV)
+[-freqmin=freqmin] - minimum frequency in eV (default: freqstep)
+[-omega=path/OMEGA] - path to the output OMEGA file (default: OMEGA to the current directory)
+
+The content of the binary OMEGA file may be viewed as follows:
+
+$ GreeKuP_dir/omega_generation/printomega -omega=path/OMEGA [-output=path/readable_version]
+
+-omega=path/OMEGA - input binary OMEGA file (default: OMEGA, current directory)
+[-output=path/readable_version] - path to the output readable file (default: OMEGAFORM, the directory of the input OMEGA file)
+
+D3c) Now the main calculation via the Kubo-Greenwood formula may be run:
+
+$ mpirun GreeKuP_dir/condcalc_c++/GreeKuP -nablaread=path/OPTICFULL -omega=path/OMEGA -onsager
+
+The GreeKuP code is parallel and should be run via mpirun and appropriate job scheduler.
+-nablaread=path/OPTICFULL - input OPTICFULL file (this key is mandatory)
+-omega=path/OMEGA - input OMEGA file (if this key is not specified, the build-in table of frequencies and broadenings will be used)
+-onsager - determines, whether L_{12}, L_{21}, L_{22} Onsager coefficients should be calculated (if the key is not specified, only dynamic electrical conductivity \sigma_1(\omega) will be calculated)
+
+The information on the calculation progress is printed to the "progress" file. The latter is created automatically during the GreeKuP operation. It it convenient to view the content of the "progress" via the "tail" command:
+
+$ tail -f progress
+
+This step was run on 64 CPUs and took 37 sec.
+
+D3d) The reference results of the GreeKuP calculation may be found in GreeKuP_dir/condcalc_c++/.
+
+We consider, that if the calculation is run with aforementioned parameters, the results should coincide with the reference ones with the discrepancy determined by the standard output precision (6 digits). The number of CPUs should better coincide with the values specified above. However, we consider, that even if the number of CPUs is different, the result should be close to reference values.
+
+The output binary files are:
+- ReCONDUCTIVITY (the real part of the dynamic electrical conductivity \sigma_1(\omega)=L_{11}(\omega))
+- L12, L12Te, L21, L22 - the dynamic Onsager coefficients calculated according to Eq. (7) from our paper [1]. The Kubo-Greenwood formula with half-sum (see [2]) is employed for their calculation.
+
+ReCONDUCTIVITYFORM, L12FORM, L12TeFORM, L21FORM, L22FORM are the readable versions of the binary files specified above.
+
+D4) Postprocessing of the Kubo-Greenwood results.
+
+If necessary, some additional postprocessing may be performed for the Kubo-Greenwood results. Only the general scheme will be described here without any benchmarks.
+
+D4a) Averaging of the dynamic Onsager coefficients.
+
+The dynamic Onsager coefficients obtained for different ionic configurations should be averaged. This may be done as follows:
+
+$ GreeKuP_dir/condcalc_c++/condmultipleprocess -aver=ReCONDUCTIVITY_AVER ReCONDUCTIVITY1 ReCONDUCTIVITY2 ... ReCONDUCTIVITY10
+
+-aver=ReCONDUCTIVITY_AVER - name of the output binary file with averaged conductivity (or other Onsager coefficients). The readable version will be written to the file with added "FORM" suffix.
+ReCONDUCTIVITY1 ReCONDUCTIVITY2 ... ReCONDUCTIVITY10 are the names of binary files with conductivities to be averaged
+
+D4b) Extrapolation to zero frequency.
+
+The procedure of extrapolation to zero frequency was described in [2]. The static Onsager coefficients may be obtained as follows:
+
+$ GreeKuP_dir/condcalc_c++/dccalc -input=ReCONDUCTIVITY_AVER -dc=ReCONDUCTIVITY_AVER_DC
+
+-input=ReCONDUCTIVITY_AVER - name of the input binary file with dynamic conductivity (or other dynamic Onsager coefficient)
+-dc=ReCONDUCTIVITY_AVER_DC - name of the output binary file with low-frequency conductivity. The readable version will be written to the file with added "FORM" suffix.
+
+The DC conductivity files are similar to regular conductivity files. The only difference: they contain three frequency values - zero, and two lowest positive values used for extrapolation. We regularly perform extrapolation for the values averaged over ionic configurations.
+
+D4c) Calculation of thermal conductivity.
+
+The thermal conductivity is expressed via the static Onsager coefficients (see Eq. (9) of paper [1]):
+
+K = L_{22} - L_{12} * L_{21} / L_{11}.
+
+The thermal conductivity may be calculated as follows:
+
+$ GreeKuP_dir/condcalc_c++/heatcalc -resigma=ReCONDUCTIVITY_AVER_DC -L12=L12_AVER_DC -L21=L21_AVER_DC -L22=L22_AVER_DC -thermal=THERMAL_DC -ratio=RATIO_DC
+
+-resigma, -L12, -L21, -L22 - mandatory keys, specifying input binary files with the low-frequency Onsager coefficients
+-thermal=THERMAL_DC - name of the output binary file with thermal conductivity
+-ratio=RATIO_DC - name of the output binary file with ratio L_{12} * L_{21} / (L_{11} * L_{22})
+
+The readable versions of THERMAL_DC and RATIO_DC will be written automatically to the files with "FORM" suffixes.
+
+
+REFERENCES
+
+[1] Knyazev D.V., Levashov P.R. Contrib. Plasma Phys. 59, 345 - 353 (2019)
+    https://doi.org/10.1002/ctpp.201800084
+[2] Knyazev D.V., Levashov P.R. Comput. Mater. Sci. 79, 817 - 829 (2013).

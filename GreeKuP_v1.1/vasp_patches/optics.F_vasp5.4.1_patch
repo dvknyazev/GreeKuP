@@ -1,0 +1,29 @@
+153a154,155
+>           OPEN(UNIT=95,FILE='OPTICFULL',ACCESS='DIRECT', &
+>               FORM='UNFORMATTED',RECL=WDES%NB_TOT*WDES%NB_TOT*IO%ICMPLX)!DK patch
+163c165,174
+< 
+---
+>       RIRECLFULL=WDES%NB_TOT*WDES%NB_TOT*IO%ICMPLX                      !DK patch
+>       RISPIN=INFO%ISPIN                                                 !DK patch
+>       RNKPTS=KPOINTS%NKPTS                                              !DK patch
+>       RNB_TOT=WDES%NB_TOT                                               !DK patch
+>       io_begin
+>       WRITE(95,REC=1) RIRECLFULL,RISPIN,RNKPTS,RNB_TOT,LATT_CUR%SCALE, &
+>            ((LATT_CUR%A(I,J),I=1,3),J=1,3),((LATT_CUR%B(I,J),I=1,3),J=1,3), &
+>            (LATT_CUR%ANORM(I),I=1,3),(LATT_CUR%BNORM(I),I=1,3), &
+>             LATT_CUR%OMEGA                                              !DK patch
+>       io_end
+166a178,181
+>         io_begin
+>         WRITE(95,REC=(2+(NK-1)*4)) (WDES%VKPT(I,NK),I=1,3),WDES%WTKPT(NK), &
+>            (W%CELTOT(J,NK,ISP),W%FERTOT(J,NK,ISP),J=1,WDES%NB_TOT)       !DK patch
+>         io_end
+174a190,193
+>          io_begin
+>          WRITE(95,REC=(2+(NK-1)*4+IDIR)) ((NABIJ(NN1,NN2),NN2=1,WDES%NB_TOT), &
+>                     NN1=1,WDES%NB_TOT)                                  !DK patch
+>          io_end
+190a210,211
+>       CLOSE(95)                                                         !DK patch 
+> 
