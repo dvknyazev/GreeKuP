@@ -510,7 +510,7 @@ int nablaaverclass::space_average(nablaclass* input)
 				this->nabij[kcounter][bandcounter1][bandcounter2] = 0;
 				for (coordcounter = 0; coordcounter < 3; coordcounter++)
 				{
-					this->nabij[kcounter][bandcounter1][bandcounter2] = this->nabij[kcounter][bandcounter1][bandcounter2] + abs(input->nabij[kcounter][bandcounter1][bandcounter2][coordcounter]) * abs(input->nabij[kcounter][bandcounter1][bandcounter2][coordcounter]);
+					this->nabij[kcounter][bandcounter1][bandcounter2] = this->nabij[kcounter][bandcounter1][bandcounter2] + std::abs(input->nabij[kcounter][bandcounter1][bandcounter2][coordcounter]) * std::abs(input->nabij[kcounter][bandcounter1][bandcounter2][coordcounter]);
 				}
 				this->nabij[kcounter][bandcounter1][bandcounter2] = this->nabij[kcounter][bandcounter1][bandcounter2] / (double)3;
 			}
@@ -766,7 +766,7 @@ int nablaaverclass::uniform_mesh()
 	{
 		for (bandcounter = 0; bandcounter < this->nb_tot - 1; bandcounter++)
 		{
-			if (abs((this->celtot[kcounter][bandcounter+1] - this->celtot[kcounter][bandcounter]) - ediff) > 1e-10)
+			if (fabs((this->celtot[kcounter][bandcounter+1] - this->celtot[kcounter][bandcounter]) - ediff) > 1e-10)
 				return 0;
 		}
 	}
@@ -801,7 +801,7 @@ int nablaaverclass::output_section_omega_Origin(int kpointnumber, double omegare
 	{
 		for (bandcounter = 0; bandcounter < this->nb_tot - 1; bandcounter++)
 		{
-			if (abs((this->celtot[kcounter][bandcounter+1] - this->celtot[kcounter][bandcounter]) - ediff) > 1e-10)
+			if (fabs((this->celtot[kcounter][bandcounter+1] - this->celtot[kcounter][bandcounter]) - ediff) > 1e-10)
 				return 1;
 		}
 	}
